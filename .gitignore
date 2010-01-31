@@ -1,0 +1,10 @@
+lib/play-scala.jar
+.DS_Store
+test-result
+tmp
+logs
+eclipse
+*.~*
+dist
+.sass-cache
+.yardopts
