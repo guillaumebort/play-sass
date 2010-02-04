@@ -35,18 +35,17 @@ public class Engine {
     }
 
     public String compile(File css, boolean dev) {
-
         // Cache ?
         CachedCSS cachedCSS = cache.get(css);
         if (cachedCSS != null) {
-            if (!dev || cachedCSS.isStillValid()) {
+            if (!dev && cachedCSS.isStillValid()) {
                 return cachedCSS.css;
             }
         }
-
+        
         List<File> dependencies = new ArrayList<File>();
         findDependencies(css, dependencies);
-
+        
         // Compute
         synchronized (Engine.class) {
 
@@ -73,6 +72,7 @@ public class Engine {
                         "require 'sass'",
                         "require 'compass/functions'",
                         "require 'compass-colors'",
+                        "require 'play'",
                         "options = {}",
                         "options[:load_paths] = "+sb,
                         "options[:style] = " + (dev ? ":expanded" : ":compressed") + "",

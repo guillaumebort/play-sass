@@ -8,9 +8,13 @@ import play.mvc.Http.Response;
 import play.vfs.VirtualFile;
 
 public class Plugin extends PlayPlugin {
-
     Engine sass;
 
+    public static String call(String args){
+        System.out.println("Java Called from Ruby : "+args);
+        return "called with "+args;
+    }
+    
     @Override
     public void onLoad() {
         sass = new Engine(Play.getVirtualFile("haml-2.2.16").getRealFile());
@@ -18,6 +22,8 @@ public class Plugin extends PlayPlugin {
 
     @Override
     public boolean serveStatic(VirtualFile file, Request request, Response response) {
+        //FIXME remove : reset engine to recompile at each css
+        
         if(file.getName().endsWith(".sass")) {
             try {
                 String css = sass.compile(file.getRealFile(), Play.mode == Play.Mode.DEV);
