@@ -101,7 +101,7 @@
   color= !color
   &:hover, &:focus
     color= !hover
-  &:active
+  &:active, &.selected
     color= !active
   &.disabled:active, &.disabled:hover, &[disabled]:active, &[disabled]:hover
     color= !color
@@ -139,7 +139,7 @@
   !h_padding_active = !h_padding - 1px
   padding= !v_padding !h_padding
   border-width= !border_width
-  &:active
+  &:active, &.selected
     padding= !v_padding_active !h_padding_active
     border-width= !border_width + 1px
   &.disabled:active, &[disabled]
