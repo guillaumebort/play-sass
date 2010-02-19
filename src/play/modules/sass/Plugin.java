@@ -9,11 +9,6 @@ import play.vfs.VirtualFile;
 
 public class Plugin extends PlayPlugin {
     Engine sass;
-
-    public static String call(String args){
-        System.out.println("Java Called from Ruby : "+args);
-        return "called with "+args;
-    }
     
     @Override
     public void onLoad() {
@@ -38,6 +33,13 @@ public class Plugin extends PlayPlugin {
             }
             return true;
         }
+
+        // Discard ruby sources
+        if(file.getName().endsWith(".rb")) {
+            response.status = 404;
+            return true;
+        }
+
         return super.serveStatic(file, request, response);
     }
 

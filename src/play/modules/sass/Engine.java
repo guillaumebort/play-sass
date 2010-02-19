@@ -28,7 +28,9 @@ public class Engine {
     Engine(File root) {
         List<String> loadPaths = new ArrayList();
         loadPaths.add(new File(root, "lib").getAbsolutePath());
-        loadPaths.add(new File(root, "../sass-extensions").getAbsolutePath());
+        for(VirtualFile vf : Play.roots) {
+            loadPaths.add(new File(vf.getRealFile(), "public/stylesheets").getAbsolutePath());
+        }
         scriptingContainer = new ScriptingContainer();
         scriptingContainer.getProvider().setLoadPaths(loadPaths);
         scriptingContainer.setErrorWriter(errors);
@@ -38,7 +40,7 @@ public class Engine {
         // Cache ?
         CachedCSS cachedCSS = cache.get(css);
         if (cachedCSS != null) {
-            if (!dev && cachedCSS.isStillValid()) {
+            if (!dev || cachedCSS.isStillValid()) {
                 return cachedCSS.css;
             }
         }
@@ -54,8 +56,17 @@ public class Engine {
             scriptingContainer.put("@result", result);
             List<String> paths = new ArrayList<String>();
             paths.add(Play.getFile("public/stylesheets").getAbsolutePath());
+            StringBuffer extensions = new StringBuffer();
             for(VirtualFile vf : Play.modules.values()) {
-                paths.add(new File(vf.getRealFile(), "public/stylesheets").getAbsolutePath());
+                File style = new File(vf.getRealFile(), "public/stylesheets");
+                paths.add(style.getAbsolutePath());
+                if(style.exists()) {
+                    for(File f : style.listFiles()) {
+                        if(f.isFile() && f.getName().endsWith(".rb")) {
+                            extensions.append("require '" + f.getName().subSequence(0, f.getName().length()-3) + "'\n");
+                        }
+                    }
+                }
             }
             StringBuffer sb = new StringBuffer("[");
             for(int i=0; i<paths.size(); i++) {
@@ -70,9 +81,7 @@ public class Engine {
             try {
                 scriptingContainer.runScriptlet(script(
                         "require 'sass'",
-                        "require 'compass/functions'",
-                        "require 'compass-colors'",
-                        "require 'play'",
+                        extensions.toString(),
                         "options = {}",
                         "options[:load_paths] = "+sb,
                         "options[:style] = " + (dev ? ":expanded" : ":compressed") + "",
