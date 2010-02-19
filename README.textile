@@ -1,0 +1,5 @@
+h1. This is a SASS module for play framework
+
+> play install sass
+
+And have fun...
