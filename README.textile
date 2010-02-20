@@ -1,5 +1,13 @@
-h1. This is a SASS module for play framework
+h2. SASS module for play framework
 
-> play install sass
+Check "http://www.playframework.org/modules/sass":http://www.playframework.org/modules/sass
 
-And have fun...
+The play sass module uses all these cool libraries:
+
+* SASS - "http://sass-lang.com/":http://sass-lang.com/
+* Compass - "http://compass-style.org/":http://compass-style.org/
+* Compass Colors - "http://github.com/chriseppstein/compass-colors":http://github.com/chriseppstein/compass-colors
+* Fancy buttons - "http://github.com/imathis/fancy-buttons":http://github.com/imathis/fancy-buttons
+* JRuby - "http://jruby.org/":http://jruby.org/
+
+This module is brought to you by "guillaume bort":http://guillaume.bort.fr - Distributed under "apache 2 licence":http://www.apache.org/licenses/LICENSE-2.0.html

@@ -24,11 +24,12 @@ public class Engine {
     Pattern extractLog = Pattern.compile("([a-zA-Z_0-9-]+[.]sass:\\d+:.+)$", Pattern.MULTILINE);
     Pattern extractLog2 = Pattern.compile("([(]sass[)]:\\d+:.+)$", Pattern.MULTILINE);
     StringWriter errors = new StringWriter();
+    List<String> sassPaths;
 
     Engine(File root) {
         List<String> loadPaths = new ArrayList();
         loadPaths.add(new File(root, "lib").getAbsolutePath());
-        for(VirtualFile vf : Play.roots) {
+        for (VirtualFile vf : Play.roots) {
             loadPaths.add(new File(vf.getRealFile(), "public/stylesheets").getAbsolutePath());
         }
         scriptingContainer = new ScriptingContainer();
@@ -44,36 +45,39 @@ public class Engine {
                 return cachedCSS.css;
             }
         }
-        
+
+        // Paths
+        sassPaths = new ArrayList<String>();
+        sassPaths.add(Play.getFile("public/stylesheets").getAbsolutePath());
+        StringBuffer extensions = new StringBuffer();
+        for (VirtualFile vf : Play.modules.values()) {
+            File style = new File(vf.getRealFile(), "public/stylesheets");
+            sassPaths.add(style.getAbsolutePath());
+            if (style.exists()) {
+                for (File f : style.listFiles()) {
+                    if (f.isFile() && f.getName().endsWith(".rb")) {
+                        extensions.append("require '" + f.getName().subSequence(0, f.getName().length() - 3) + "'\n");
+                    }
+                }
+            }
+        }
+
+        // Compute dependencies
         List<File> dependencies = new ArrayList<File>();
         findDependencies(css, dependencies);
-        
-        // Compute
+
+        // Compile
         synchronized (Engine.class) {
 
             StringBuffer result = new StringBuffer();
             errors.getBuffer().setLength(0);
             scriptingContainer.put("@result", result);
-            List<String> paths = new ArrayList<String>();
-            paths.add(Play.getFile("public/stylesheets").getAbsolutePath());
-            StringBuffer extensions = new StringBuffer();
-            for(VirtualFile vf : Play.modules.values()) {
-                File style = new File(vf.getRealFile(), "public/stylesheets");
-                paths.add(style.getAbsolutePath());
-                if(style.exists()) {
-                    for(File f : style.listFiles()) {
-                        if(f.isFile() && f.getName().endsWith(".rb")) {
-                            extensions.append("require '" + f.getName().subSequence(0, f.getName().length()-3) + "'\n");
-                        }
-                    }
-                }
-            }
             StringBuffer sb = new StringBuffer("[");
-            for(int i=0; i<paths.size(); i++) {
+            for (int i = 0; i < sassPaths.size(); i++) {
                 sb.append("'");
-                sb.append(paths.get(i));
+                sb.append(sassPaths.get(i));
                 sb.append("'");
-                if(i < paths.size() - 1) {
+                if (i < sassPaths.size() - 1) {
                     sb.append(",");
                 }
             }
@@ -83,7 +87,7 @@ public class Engine {
                         "require 'sass'",
                         extensions.toString(),
                         "options = {}",
-                        "options[:load_paths] = "+sb,
+                        "options[:load_paths] = " + sb,
                         "options[:style] = " + (dev ? ":expanded" : ":compressed") + "",
                         "options[:line_comments] = " + (dev ? "true" : "false") + "",
                         "input = File.new('" + css.getAbsolutePath() + "', 'r')",
@@ -102,7 +106,7 @@ public class Engine {
                     error = matcher.group(1).replace("(sass)", css.getName());
                     Logger.error(error);
                 }
-                if(error.equals("")) {
+                if (error.equals("")) {
                     Logger.error(e, "SASS Error");
                     error = "Check logs";
                 }
@@ -125,28 +129,31 @@ public class Engine {
         }
         return buffer.toString();
     }
-
     Pattern imports = Pattern.compile("@import\\s+([^\\s]+)");
 
     private void findDependencies(File sass, List<File> all) {
         try {
-            if(sass.exists()) {
+            if (sass.exists()) {
                 all.add(sass);
                 Matcher m = imports.matcher(IO.readContentAsString(sass));
-                while(m.find()) {
+                while (m.find()) {
                     String fileName = m.group(1);
-                    File depSass = new File(sass.getParentFile(), fileName);
-                    if(!depSass.exists()) {
-                        depSass = new File(sass.getParentFile(), "_" + fileName);
+                    for (String path : sassPaths) {
+                        File depSass = new File(path + "/" + fileName);
+                        if (!depSass.exists()) {
+                            depSass = new File(depSass.getParentFile() + "/_" + depSass.getName());
+                        }
+                        if (depSass.exists()) {
+                            findDependencies(depSass, all);
+                            break;
+                        }
                     }
-                    findDependencies(depSass, all);
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             Logger.error(e, "in SASS.findDependencies");
         }
     }
-
     Map<File, CachedCSS> cache = new HashMap();
 
     static class CachedCSS {
@@ -161,8 +168,8 @@ public class Engine {
         }
 
         public boolean isStillValid() {
-            for(File f : deps) {
-                if(f.lastModified() > ts) {
+            for (File f : deps) {
+                if (f.lastModified() > ts) {
                     return false;
                 }
             }
