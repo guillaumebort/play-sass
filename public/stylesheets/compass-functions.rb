@@ -1,4 +1,15 @@
+require 'ostruct'
+
 module Compass
+  def self.configuration    
+    @configuration ||= Configuration.new(:http_images_path => "/public/images/")
+  end
+end
+
+class Compass::Configuration < OpenStruct
+  def relative_assets?
+    false
+  end
 end
 
 module Compass::SassExtensions
