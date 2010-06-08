@@ -24,6 +24,9 @@ public class Plugin extends PlayPlugin {
                 String css = sass.compile(file.getRealFile(), Play.mode == Play.Mode.DEV);
                 response.contentType = "text/css";
                 response.status = 200;
+                if(Play.mode == Play.Mode.PROD) {
+                    response.cacheFor("1h");
+                }
                 response.print(css);
             } catch(Exception e) {
                 response.contentType = "text/css";
