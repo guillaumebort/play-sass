@@ -21,8 +21,8 @@ import play.vfs.VirtualFile;
 public class Engine {
 
     ScriptingContainer scriptingContainer;
-    Pattern extractLog = Pattern.compile("([a-zA-Z_0-9-]+[.]sass:\\d+:.+)$", Pattern.MULTILINE);
-    Pattern extractLog2 = Pattern.compile("([(]sass[)]:\\d+:.+)$", Pattern.MULTILINE);
+    Pattern extractLog = Pattern.compile("([a-zA-Z_0-9-]+[.]s[ca]ss:\\d+:.+)$", Pattern.MULTILINE);
+    Pattern extractLog2 = Pattern.compile("([(]s[ca]ss[)]:\\d+:.+)$", Pattern.MULTILINE);
     StringWriter errors = new StringWriter();
     List<String> sassPaths;
 
@@ -90,6 +90,7 @@ public class Engine {
                         "options[:load_paths] = " + sb,
                         "options[:style] = " + (dev ? ":expanded" : ":compressed") + "",
                         "options[:line_comments] = " + (dev ? "true" : "false") + "",
+                        "options[:syntax] = " + (css.getAbsolutePath().endsWith(".scss") ? ":scss" : ":sass") + "",
                         "input = File.new('" + css.getAbsolutePath() + "', 'r')",
                         "tree = ::Sass::Engine.new(input.read(), options).to_tree",
                         "@result.append(tree.render)"));

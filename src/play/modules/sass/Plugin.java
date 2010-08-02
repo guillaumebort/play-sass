@@ -19,7 +19,7 @@ public class Plugin extends PlayPlugin {
     public boolean serveStatic(VirtualFile file, Request request, Response response) {
         //FIXME remove : reset engine to recompile at each css
         
-        if(file.getName().endsWith(".sass")) {
+        if(file.getName().endsWith(".sass") || file.getName().endsWith(".scss")) {
             try {
                 String css = sass.compile(file.getRealFile(), Play.mode == Play.Mode.DEV);
                 response.contentType = "text/css";
