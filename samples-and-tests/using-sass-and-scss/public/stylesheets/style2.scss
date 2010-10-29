@@ -1,0 +1,13 @@
+@import "more.scss";
+
+$blue: #00e;
+
+body {
+    h2 {
+        color: $blue;
+    }
+    
+    a {
+        @include set-color(gray);
+    }
+}

@@ -1,0 +1,12 @@
+#{extends 'main.html' /}
+#{set title:'SASS error' /}
+
+#{set 'moreStyles'}
+	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/sassError.sass'}">
+#{/set}
+
+<h1>You should see an error</h1>
+
+<p>
+	<a href="@{index()}">back</a>
+</p>

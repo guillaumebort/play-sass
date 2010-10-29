@@ -1,0 +1,28 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+#{set 'moreStyles'}
+	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/style1.sass'}">
+	<link rel="stylesheet" type="text/css" media="screen" href="@{'/public/stylesheets/style2.scss'}">
+#{/set}
+
+
+<h1>This title should be red</h1>
+
+<p>
+	This paragraph should be green
+</p>
+
+<h2>This subtitle should be blue and underlined</h2>
+
+<p>
+	<a href="@{sassError()}">Click here to check a SASS error.</a>
+</p>
+
+<p>
+	<a href="@{scssError()}">Click here to check a SCSS error.</a>
+</p>
+
+<p>
+	Link bellow must be gray
+</p>

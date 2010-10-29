@@ -1,0 +1,7 @@
+h2 {
+    text-decoration: underline;
+}
+
+@mixin set-color($x) {
+    color: $x;
+}

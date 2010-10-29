@@ -130,7 +130,7 @@ public class Engine {
         }
         return buffer.toString();
     }
-    Pattern imports = Pattern.compile("@import\\s+([^\\s]+)");
+    Pattern imports = Pattern.compile("@import\\s+[\"']?([^\\s'\";]+)[\"']?");
 
     private void findDependencies(File sass, List<File> all) {
         try {

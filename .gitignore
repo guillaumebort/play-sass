@@ -8,3 +8,4 @@ eclipse
 dist
 .sass-cache
 .yardopts
+*.pyc
