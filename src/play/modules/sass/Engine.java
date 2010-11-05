@@ -32,8 +32,22 @@ public class Engine {
         for (VirtualFile vf : Play.roots) {
             loadPaths.add(new File(vf.getRealFile(), "public/stylesheets").getAbsolutePath());
         }
-        scriptingContainer = new ScriptingContainer();
+        System.setProperty("jruby.jit.codeCache", new File(Play.tmpDir, "jruby-cache").getAbsolutePath());
+        scriptingContainer = new ScriptingContainer(org.jruby.embed.LocalContextScope.SINGLETON);
+        
+        // Load path for ruby scripts
         scriptingContainer.getProvider().setLoadPaths(loadPaths);
+        
+        // --fast mode
+        scriptingContainer.setCompileMode(org.jruby.RubyInstanceConfig.CompileMode.JIT);
+        scriptingContainer.getProvider().getRubyInstanceConfig().FASTEST_COMPILE_ENABLED = true;
+        scriptingContainer.getProvider().getRubyInstanceConfig().FRAMELESS_COMPILE_ENABLED = true;
+        scriptingContainer.getProvider().getRubyInstanceConfig().POSITIONLESS_COMPILE_ENABLED = true;
+        scriptingContainer.getProvider().getRubyInstanceConfig().FASTCASE_COMPILE_ENABLED = true;
+        scriptingContainer.getProvider().getRubyInstanceConfig().FASTSEND_COMPILE_ENABLED = true;
+        scriptingContainer.getProvider().getRubyInstanceConfig().INLINE_DYNCALL_ENABLED = true;
+        
+        // Redirect output
         scriptingContainer.setErrorWriter(errors);
     }
 
@@ -88,6 +102,8 @@ public class Engine {
                         extensions.toString(),
                         "options = {}",
                         "options[:load_paths] = " + sb,
+                        //"options[:update] = true",
+                        "options[:cache_location] = '" + new File(Play.tmpDir, "sass-cache").getAbsolutePath() + "'",
                         "options[:style] = " + (dev ? ":expanded" : ":compressed") + "",
                         "options[:line_comments] = " + (dev ? "true" : "false") + "",
                         "options[:syntax] = " + (css.getAbsolutePath().endsWith(".scss") ? ":scss" : ":sass") + "",
