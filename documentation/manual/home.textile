@@ -4,7 +4,7 @@ This module brings sass to play applications. Sass makes CSS fun again. Sass is 
 
 You can read more about sass on "the official website":http://sass-lang.com/
 
-p(note). This version use Haml-3.0.22 - Both syntax SASS and SCSS are supported.
+p(note). This version use Haml-3.1.1 - Both syntax SASS and SCSS are supported.
 
 h2. <a>Usage</a>
 
