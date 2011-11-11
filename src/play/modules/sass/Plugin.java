@@ -1,6 +1,7 @@
 package play.modules.sass;
 
 import java.io.PrintStream;
+
 import play.Play;
 import play.PlayPlugin;
 import play.mvc.Http.Request;
@@ -8,20 +9,25 @@ import play.mvc.Http.Response;
 import play.vfs.VirtualFile;
 
 public class Plugin extends PlayPlugin {
-    Engine sass;
-    
-    @Override
-    public void onLoad() {
-        sass = new Engine(Play.getVirtualFile("haml-3.0.22").getRealFile());
+    private static final ThreadLocal<Engine> sass =
+        new ThreadLocal<Engine>() {
+            @Override
+            protected Engine initialValue() {
+                return new Engine(Play.getVirtualFile("haml-3.0.22").getRealFile());
+            }
+        };
+
+    public static Engine getEngine() {
+        return sass.get();
     }
 
     @Override
     public boolean serveStatic(VirtualFile file, Request request, Response response) {
         //FIXME remove : reset engine to recompile at each css
-        
+
         if(file.getName().endsWith(".sass") || file.getName().endsWith(".scss")) {
             try {
-                String css = sass.compile(file.getRealFile(), Play.mode == Play.Mode.DEV);
+                String css = getEngine().compile(file.getRealFile(), Play.mode == Play.Mode.DEV);
                 response.contentType = "text/css";
                 response.status = 200;
                 if(Play.mode == Play.Mode.PROD) {
