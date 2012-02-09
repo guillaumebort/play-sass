@@ -1,7 +1,11 @@
 package play.modules.sass;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 
+import play.Logger;
 import play.Play;
 import play.PlayPlugin;
 import play.mvc.Http.Request;
@@ -19,6 +23,33 @@ public class Plugin extends PlayPlugin {
 
     public static Engine getEngine() {
         return sass.get();
+    }
+
+    @Override
+    public void onLoad() {
+        if (System.getProperty("precompile") == null) {
+            return;
+        }
+
+        // Compile sass and scss files into css during precompile
+        VirtualFile stylesheets = Play.getVirtualFile("/public/stylesheets/");
+        for (VirtualFile file : stylesheets.list()) {
+            if (!file.getName().startsWith("_") &&
+                (file.getName().endsWith(".sass") || file.getName().endsWith(".scss"))) {
+                String cssFileName = file.getRealFile().getParentFile() + "/" +
+                                     file.getName().replace(".sass", "")
+                                         .replace(".scss", "") + ".css";
+                try {
+                    FileWriter fstream = new FileWriter(cssFileName);
+                    BufferedWriter out = new BufferedWriter(fstream);
+                    out.write(getEngine().compile(file.getRealFile(), false));
+                    out.close();
+                } catch (IOException e) {
+                    Logger.error(e, "Failed to compile to css: %s", file);
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     @Override
