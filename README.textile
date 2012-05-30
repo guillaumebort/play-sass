@@ -46,4 +46,4 @@ In PROD mode the CSS is stripped down to the minimal size.
 
 In cas of error the generated CSS will not be interpreted by your browser and you will see the error message directly into the page:
 
-!images/error!
+!https://github.com/guillaumebort/play-sass/raw/master/documentation/images/error.png!
