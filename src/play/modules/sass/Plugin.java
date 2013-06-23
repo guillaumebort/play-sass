@@ -12,7 +12,7 @@ public class Plugin extends PlayPlugin {
     
     @Override
     public void onLoad() {
-        sass = new Engine(Play.getVirtualFile("haml-3.0.22").getRealFile());
+        sass = new Engine(Play.getVirtualFile("haml-3.1.1").getRealFile());
     }
 
     @Override
