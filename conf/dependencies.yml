@@ -1,4 +1,4 @@
-self: booster.sass -> sass 0.1
+self: play -> sass 0.1
 
 require:
     - play
