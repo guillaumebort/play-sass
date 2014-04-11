@@ -1,0 +1,5 @@
+self: booster.sass -> sass 0.1
+
+require:
+    - play
+    - org.jruby                      -> jruby-complete 1.7.4
