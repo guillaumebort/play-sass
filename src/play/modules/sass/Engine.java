@@ -158,7 +158,10 @@ public class Engine {
                     for (String path : sassPaths) {
                         File depSass = new File(path + "/" + fileName);
                         if (!depSass.exists()) {
-                            depSass = new File(depSass.getParentFile() + "/_" + depSass.getName() + ".sass");
+                            depSass = new File(path + "/_" + fileName + ".sass");
+                        }
+                        if (!depSass.exists()) {
+                            depSass = new File(path + "/_" + fileName + ".scss");
                         }
                         if (depSass.exists()) {
                             findDependencies(depSass, all);
