@@ -4,7 +4,7 @@ This module brings sass to play applications. Sass makes CSS fun again. Sass is 
 
 You can read more about sass on "the official website":http://sass-lang.com/
 
-p(note). This version use Haml-3.0.22 - Both syntax SASS and SCSS are supported.
+p(note). This version use Haml-3.0.22 - Both syntax Sass and SCSS are supported.
 
 h2. <a>Usage</a>
 
@@ -22,7 +22,7 @@ Once the module is installed you can write some sass files in the **public/style
 Let's see a very simple example. Create the **public/stylesheets/main.scss** file:
 
 bc. $blue: #3bbfce;
- 
+
 h1 {
     color: $blue;
     font-weight: bold;
