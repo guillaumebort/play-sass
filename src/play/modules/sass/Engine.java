@@ -15,7 +15,7 @@ import play.libs.IO;
 import play.vfs.VirtualFile;
 
 /**
- * SASS wrapper with pretty cool auto-reloading and errors reporting
+ * Sass wrapper with pretty cool auto-reloading and errors reporting
  * @author guillaume bort
  */
 public class Engine {
@@ -34,10 +34,10 @@ public class Engine {
         }
         System.setProperty("jruby.jit.codeCache", new File(Play.tmpDir, "jruby-cache").getAbsolutePath());
         scriptingContainer = new ScriptingContainer(org.jruby.embed.LocalContextScope.SINGLETON);
-        
+
         // Load path for ruby scripts
         scriptingContainer.getProvider().setLoadPaths(loadPaths);
-        
+
         // --fast mode
         scriptingContainer.setCompileMode(org.jruby.RubyInstanceConfig.CompileMode.JIT);
         scriptingContainer.getProvider().getRubyInstanceConfig().FASTEST_COMPILE_ENABLED = true;
@@ -46,7 +46,7 @@ public class Engine {
         scriptingContainer.getProvider().getRubyInstanceConfig().FASTCASE_COMPILE_ENABLED = true;
         scriptingContainer.getProvider().getRubyInstanceConfig().FASTSEND_COMPILE_ENABLED = true;
         scriptingContainer.getProvider().getRubyInstanceConfig().INLINE_DYNCALL_ENABLED = true;
-        
+
         // Redirect output
         scriptingContainer.setErrorWriter(errors);
     }
@@ -124,7 +124,7 @@ public class Engine {
                     Logger.error(error);
                 }
                 if (error.equals("")) {
-                    Logger.error(e, "SASS Error");
+                    Logger.error(e, "Sass Error");
                     error = "Check logs";
                 }
                 return "/** The CSS was not generated because the " + css.getName() + " file has errors; check logs **/\n\n"
